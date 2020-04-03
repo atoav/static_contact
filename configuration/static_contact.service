@@ -1,0 +1,10 @@
+[Unit]
+Description=static_configuration
+After=multiuser.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/post_to_smtp
+
+[Install]
+WantedBy=multiuser.target

@@ -1,0 +1,44 @@
+[package]
+name = "static_contact"
+version = "0.1.0"
+authors = ["atoav <dh@atoav.com>"]
+edition = "2018"
+description = "A server side tool that relays post requests with form fields like name, email, phone and message to email via SMTP"
+repository = "https://github.com/atoav/static-contact/"
+readme = "README.md"
+categories = ["email"]
+keywords = ["email", "smtp", "REST", "post", "http", "server", "contact", "JSON"]
+
+[package.metadata.deb]
+copyright = "2020, David Huss <dh@atoav.com>"
+license-file = ["LICENSE", "4"]
+depends = "$auto, systemd"
+extended-description = """\
+A server side tool that relays post requests with form fields like name, email, phone and message to email via SMTP."""
+section = "utility"
+priority = "optional"
+assets = [
+    ["target/release/cargo-deb", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/cargo-deb/README", "644"],
+    # ["configuration/config.toml", "", ""],
+    ["configuration/static_contact.service", "/etc/systemd/system/static_contact.service", "664"],
+]
+conf-files = [
+
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "~0.3"
+actix-web = "~2.0"
+actix-rt = "~1.0"
+actix-cors="*"
+serde = { version = "~1", features = ["derive"] }
+lettre = "~0.9"
+lettre_email = "~0.9"
+failure = "~0.1"
+check-if-email-exists = "~0.6"
+app_dirs = "~1.2.1"
+toml = "~0.5"
+lazy_static = "~1.4.0"

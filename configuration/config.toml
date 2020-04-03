@@ -1,0 +1,42 @@
+[server]
+max_payload = 4096 # Max post payload in kB
+ip = "127.0.0.1"   # IP of the service
+port = 8088        # Port the service runs on
+smtp_server   = "smtp.example.com"     # Domain of the SMTP server
+smtp_user     = "username@example.com" # Username for the SMTP user
+smtp_password = "yoursecretpassword"   # Password for the SMTP server
+
+
+# A single instance of static_contact can route multiple contact forms from multiple domains to different target email adresses. The key here is the identifier field: if the contact form sends the right identifier to the server, it gets mapped to the fitting endpoint.
+
+# This means you can add multiple endpoints, each with different target emails and other settings. The domain name is used to register it as a CORS origin.
+
+[[endpoints]]
+# Identifier to be sent via POST
+identifier = "project_foo_9f1098f3c333"
+# The name gets displayed in the mail subject: 
+# [project foo] Contact from Mister X
+name = "project foo"
+max_name_length = 254 # Maximum length of the name field
+max_message_length = 1000 # Maximum length of the message field
+domain = "https://foo.com" # CORS domain that identifies the endpoint
+from_email = "username@example.com" # from email used in SMTP
+
+[endpoints.target]
+email = "relay_mail_here@example.com" # Mail gets sent to this adress
+email_name = "John Doe (Project Foo Leader)" # Using this name
+
+
+# Another Endpoint with a different target:
+[[endpoints]]
+identifier = "project_bar_6231dc2f8f03"
+name = "project bar"
+max_name_length = 254
+max_message_length = 2000
+domain = "https://bar.com"
+from_email = "username@example.com"
+
+[endpoints.target]
+email = "relay_mail_there@example.com"
+email_name = "Jane Doe (Project Bar Leader)"
+
