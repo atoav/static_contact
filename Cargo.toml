@@ -20,11 +20,11 @@ priority = "optional"
 assets = [
     ["target/release/cargo-deb", "usr/bin/", "755"],
     ["README.md", "usr/share/doc/cargo-deb/README", "644"],
-    # ["configuration/config.toml", "", ""],
+    ["configuration/config.toml", "/etc/static_contact/config.toml", "755"],
     ["configuration/static_contact.service", "/etc/systemd/system/static_contact.service", "664"],
 ]
 conf-files = [
-
+    "/etc/static_contact/config.toml"
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
