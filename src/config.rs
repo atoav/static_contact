@@ -6,13 +6,12 @@
 //! ```
 //! 
 
-use app_dirs::*;
 use std::path::PathBuf;
 use serde::Deserialize;
 use std::fs;
 
-/// This reads the Appinfo from the `Cargo.toml` and passes ot to the `get_app_root()` command, so the propper config path can be generated.
-const APP_INFO: AppInfo = AppInfo{name: env!("CARGO_PKG_NAME"), author: env!("CARGO_PKG_AUTHORS")};
+/// Constant for Configuration
+pub const CONFIG_PATH: PathBuf = PathBuf::from("/etc/static_contact/config.toml");
 
 /// Stores server and endpoints configuration, read from `config.toml`
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -58,40 +57,36 @@ impl Config{
     /// let config = Config::new();
     /// ```
     pub fn new() -> Self {
-        let path = get_app_root(AppDataType::UserConfig, &APP_INFO).expect("Error: Couldn't get a config path");
-        let mut path: PathBuf = path.into();
-        path.push("config.toml");
-
-        let contents = match fs::read_to_string(&path){
+        let contents = match fs::read_to_string(&CONFIG_PATH){
             Ok(c) => c,
             Err(e) => {
                 match e.kind() {
                    std::io::ErrorKind::PermissionDenied => {
-                        match fs::metadata(&path) {
+                        match fs::metadata(&CONFIG_PATH) {
                             Ok(meta) => {
                                 if meta.is_dir() {
-                                    eprintln!("Error: cannot read the config at {:?} it seems to be a dir not a file...", path);
+                                    eprintln!("Error: cannot read the config at {:?} it seems to be a dir not a file...", CONFIG_PATH);
                                 }else{
                                     let permissions = meta.permissions();
                                     if cfg!(unix) {
                                         use std::os::unix::fs::PermissionsExt;
-                                        eprintln!("Error: insufficient permissions to read the config at {:?} ({:o})", path, permissions.mode());
+                                        eprintln!("Error: insufficient permissions to read the config at {:?} ({:o})", CONFIG_PATH, permissions.mode());
                                     }else{
-                                        eprintln!("Error: insufficient permissions to read the config at {:?} (Readonly: {})", path, permissions.readonly());
+                                        eprintln!("Error: insufficient permissions to read the config at {:?} (Readonly: {})", CONFIG_PATH, permissions.readonly());
                                     }
                                 }
                                 
                             },
                             Err(_e) => {
-                                eprintln!("Error: insufficient permissions to read the config at {:?}", path);
+                                eprintln!("Error: insufficient permissions to read the config at {:?}", CONFIG_PATH);
                             }
                         }
                     },
                     std::io::ErrorKind::NotFound => {
-                        eprintln!("Error: No config.toml found at {:?}", path);
+                        eprintln!("Error: No config.toml found at {:?}", CONFIG_PATH);
                     }
                     _ => {
-                        eprintln!("Error while attempting to read config from path {:?}: {:?}", path, e);
+                        eprintln!("Error while attempting to read config from path {:?}: {:?}", CONFIG_PATH, e);
                     }
                 }
                 std::process::exit(0);
@@ -108,10 +103,6 @@ impl Config{
     /// println!("{:?}", path);
     /// ```
     pub fn path(&self) -> PathBuf {
-        let path = get_app_root(AppDataType::UserConfig, &APP_INFO).expect("Error: Couldn't get a config path");
-        let mut path: PathBuf = path.into();
-        path.push("config.toml");
-
-        path
+        CONFIG_PATH
     }
 }
