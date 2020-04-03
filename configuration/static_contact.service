@@ -4,7 +4,7 @@ After=multiuser.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/post_to_smtp
+ExecStart=/usr/bin/static_contact
 
 [Install]
 WantedBy=multiuser.target
