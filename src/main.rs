@@ -51,11 +51,9 @@ async fn index(mut data: web::Json<FormData>, data2: web::Data<Config>) -> impl 
         response = Some(HttpResponse::NotAcceptable().body(format!("Error: The Endpoint with the identifier-value \"{}\" was not named in the config", data.identifier)))
     }
 
-    let endpoint_config = matching_endpoints.unwrap();
-
     // Check length of form data
     if response.is_none(){
-        let result = data.check_length(endpoint_config);
+        let result = data.check_length(matching_endpoints.unwrap());
 
         match result {
             Err(ref e) => response = Some(HttpResponse::PayloadTooLarge().body(format!("Error while checking form data: {}", e))),
@@ -65,7 +63,7 @@ async fn index(mut data: web::Json<FormData>, data2: web::Data<Config>) -> impl 
 
     // Check email validity
     if response.is_none(){
-        let result = data.check_existence(endpoint_config).await;
+        let result = data.check_existence(matching_endpoints.unwrap()).await;
 
         match result {
             Err(ref e) => response = Some(HttpResponse::NotAcceptable().body(format!("Error while checking mail validity: {}", e))),
@@ -74,7 +72,7 @@ async fn index(mut data: web::Json<FormData>, data2: web::Data<Config>) -> impl 
     }
 
     if response.is_none(){
-        match send_mail(&data, config, endpoint_config){
+        match send_mail(&data, config, matching_endpoints.unwrap()){
             Ok(_) => {
                 println!("Email relayed to target adress");
                 let m = format!("Thank you for your message. I will come back to you soon.");
