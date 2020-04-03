@@ -8,6 +8,7 @@ repository = "https://github.com/atoav/static-contact/"
 readme = "README.md"
 categories = ["email"]
 keywords = ["email", "smtp", "REST", "post", "http", "server", "contact", "JSON"]
+license = "MIT"
 
 [package.metadata.deb]
 copyright = "2020, David Huss <dh@atoav.com>"
@@ -18,9 +19,9 @@ A server side tool that relays post requests with form fields like name, email, 
 section = "utility"
 priority = "optional"
 assets = [
-    ["target/release/cargo-deb", "usr/bin/", "755"],
+    ["target/debian/static_contact", "usr/bin/static_contact", "755"],
     ["README.md", "usr/share/doc/cargo-deb/README", "644"],
-    ["configuration/config.toml", "/etc/static_contact/config.toml", "755"],
+    ["configuration/config.toml", "/etc/static_contact/config.toml", "655"],
     ["configuration/static_contact.service", "/etc/systemd/system/static_contact.service", "664"],
 ]
 conf-files = [
