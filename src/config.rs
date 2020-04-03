@@ -1,4 +1,4 @@
-//! The [Config] struct is the deserialization of the `config.toml` file. The path to the config is automatically chosen by the `get_app_root()` function, based on the OS and the XDG environment variables (if you use them). 
+//! The [Config] struct is the deserialization of the `config.toml` file.
 //! 
 //! Read the config from it's default path by running:
 //! ```
