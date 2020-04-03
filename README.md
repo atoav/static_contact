@@ -6,6 +6,8 @@ This is meant to be a simple self-hosted solution for contact forms on static we
 ## Installation
 static_contact runs as a systemd-service on a local port. Although it would be possible to expose this directly to the web, it is recommended to run this service behind a a reverse proxy server (like nginx).
 
+Make sure to have `libssl-dev` and `pkg-config` installed.
+
 Start the service via `sudo systemctl start static_contact`
 
 ## Operation
