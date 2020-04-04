@@ -125,6 +125,7 @@ async fn main() -> std::io::Result<()> {
         }
         cors = cors.allowed_methods(vec!["GET", "POST"])
                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT, header::CONTENT_TYPE, header::ORIGIN])
+                   .supports_credentials()
                    .max_age(3600);
 
 
