@@ -29,7 +29,7 @@ pub fn send_mail(data: &FormData, config: &Config, endpoint_config: &EndpointCon
         .alternative(
             format!("<p>{name} wrote:</p><br><i>{message}</i>\n\n<br><br><p>Reply to <a href=\"mailto:{email}\">{email}</a> or {phone}</p>", 
                 name=data.name, 
-                message=data.message, 
+                message=data.message.replace("\n", "<br>"), 
                 phone=phone_contact, 
                 email=data.email),
             format!("Message from {name}:\n\n> {message}\n\nReply to <{email}> or {phone}", 
