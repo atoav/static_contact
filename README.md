@@ -23,7 +23,7 @@ sudo vim /etc/static_contact/config.toml
 
 Pay special attention to the SMTP configuration, it should reflect the values of your SMTP server.
 
-## Operation
+## System Operation
 Start the service via `sudo systemctl start static_contact`
 Check the service status via `sudo systemctl status static_contact`
 Check the logs via `journalctl -u static_contact`
@@ -32,7 +32,7 @@ Automatically start the service on boot via `sudo systemctl enable static_contac
 Update by running this in the downloaded repository: `git pull && cargo build --release && cargo deb && sudo dpkg -r static_contact && sudo dpkg -i target/debian/*.deb && sudo systemctl daemon-reload && sudo systemctl restart static_contact`
 
 ## Example Nginx Configuration
-Note that this used Certbot to generate Let's Encrypt certificates:
+Note that this used Certbot to generate Let's Encrypt certificates, these are ommited for previty. Replace `post.example.com` with the Domain (or IP+port) your service runs under:
 
 ```
 server {
@@ -44,16 +44,10 @@ server {
         add_header X-Content-Type-Options nosniff;
         add_header X-XSS-Protection "1; mode=block";
 
-        # listen [::]:443 ssl ipv6only=on; # managed by Certbot
-        listen 443 ssl; # managed by Certbot
+        # listen [::]:443 ssl ipv6only=on;
+        listen 443 ssl;
 
-        client_max_body_size 10M;
-        client_body_buffer_size 128k;
-
-        ssl_certificate /etc/letsencrypt/live/post.example.com/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/post.example.com/privkey.pem; # managed by Certbot
-        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+        # Certs here omited for previty
 
         location / {
                 proxy_set_header Host $host;
@@ -65,29 +59,77 @@ server {
                 proxy_set_header Connection "upgrade";
 
                 proxy_redirect http://127.0.0.1:8088/ /;
-                proxy_redirect ws://127.0.0.1:8088/api/socket /api/socket;
                 proxy_pass http://127.0.0.1:8088;
                 proxy_read_timeout 86400s;
                 proxy_send_timeout 86400s;
                 allow all; # Any IP can perform any other requests
+
+                add_header 'Access-Control-Allow-Headers' 'Authorization,Accept,Origin,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range';
+                add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS';
         }
 }
-
-server {
-    if ($host = post.example.com) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    listen          80;
-    listen          [::]:80;
-    server_name     post.example.com;
-    return 404; # managed by Certbot
 ```
 
+## Frontend Example
+
+### HTML
+Replace the identifier value `mysitename` with the corresponding identifier set in the `config.toml` on your server:
+```HTML
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>static_contact Example</title>
+    </head>
+    <body>
+        <form id="contactform" name="contact" method="POST">
+            <label id="namelabel">Name *</label>
+            <input id="name" type="text" name="name" required="required" placeholder="Your Name" />
+
+            <label id="emaillabel">Email *</label>
+            <input id="email" type="text" name="email" required="required" placeholder="Your mail adress"/>
+
+            <label id="phonelabel">Phone</label>
+            <input id="phone" type="text" name="phone" placeholder="Your Phone number (optional)"/>
+
+            <label id="messagelabel">Message *</label>
+            <textarea  id="message" name="message" placeholder="Your message to us"></textarea>
+
+            <button id="submit" class="submit" type="submit" name="identifier" value="mysitename">Send</button>
+        </form>
+
+    <script src="js/submit.js"></script>
+    </body>
+</html>
+```
+
+### Javascript
+Replace `post.example.com` with the Domain (or IP+port) your service runs under:
+```Javascript
+// Serializes Form into JSON
+const formToJSON = elements => [].reduce.call(elements, (data, element) => {
+    data[element.name] = element.value;
+    return data;
+}, {});
+
+// Submit form data to server
+const Submit = event => {
+    event.preventDefault();
+    const data = formToJSON(form.elements);
+    console.log(JSON.stringify(data, null, "  "));
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://post.example.com", true);
+    xhr.setRequestHeader('Content-Type', 'text/plain');
+    xhr.send(JSON.stringify(data, null, "  "));
+};
+
+const form = document.getElementById('contactform');
+form.addEventListener('submit', Submit);
+```
 
 ## Testing
 
-You can send a test request to static_contact via curl:
+You can send a test request to static_contact via curl, replace the adress at the end with the domain of your service if you run it there and make sure the identifier is found in your `config.toml`:
 ```Bash
 curl --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088
 ```
