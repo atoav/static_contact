@@ -105,6 +105,9 @@ async fn main() -> std::io::Result<()> {
     println!("Read config from \"{:?}\"", CONFIG.path());
     let ip = &CONFIG.server.ip;
     let port = &CONFIG.server.port;
+    
+    std::env::set_var("RUST_LOG", "actix_web=info");
+    env_logger::init();
 
     HttpServer::new(move || {
         println!("Starting Worker Thread at {ip}:{port}",
@@ -119,6 +122,7 @@ async fn main() -> std::io::Result<()> {
                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                    .allowed_header(header::CONTENT_TYPE)
                    .max_age(3600);
+
 
         App::new()
             .data(Config::new())
