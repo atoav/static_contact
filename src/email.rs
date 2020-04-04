@@ -9,6 +9,7 @@ use lettre::{Transport, SmtpClient};
 use lettre::smtp::extension::ClientId;
 use lettre::smtp::ConnectionReuseParameters;
 use lettre_email::Email;
+use ammonia::clean;
 
 /// Send email via SMTP
 pub fn send_mail(data: &FormData, config: &Config, endpoint_config: &EndpointConfig) -> Result<Response, lettre::smtp::error::Error> {
@@ -28,15 +29,15 @@ pub fn send_mail(data: &FormData, config: &Config, endpoint_config: &EndpointCon
         .subject(format!("[{endpoint_name}] Contact from {name}", endpoint_name=endpoint_config.name, name=data.name))
         .alternative(
             format!("<p>{name} wrote:</p><br><i>{message}</i>\n\n<br><br><p>Reply to <a href=\"mailto:{email}\">{email}</a> or {phone}</p>", 
-                name=data.name, 
-                message=data.message.replace("\n", "<br>"), 
-                phone=phone_contact, 
-                email=data.email),
+                name=clean(&data.name), 
+                message=clean(&data.message).replace("\n", "<br>"), 
+                phone=clean(&phone_contact), 
+                email=clean(&data.email)),
             format!("Message from {name}:\n\n> {message}\n\nReply to <{email}> or {phone}", 
-                name=data.name, 
-                message=data.message, 
-                phone=phone_contact, 
-                email=data.email))
+                name=clean(&data.name), 
+                message=clean(&data.message), 
+                phone=clean(&phone_contact), 
+                email=clean(&data.email)))
         .build()
         .expect("Error while building mail");
 
