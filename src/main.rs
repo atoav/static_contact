@@ -19,6 +19,7 @@ use serde::Serialize;
 use actix_web::{http::header, error, web, FromRequest, HttpResponse, web::Json};
 use actix_web::middleware::Logger;
 use lazy_static::lazy_static;
+use mime;
 
 mod form;
 mod email;
@@ -138,7 +139,11 @@ async fn main() -> std::io::Result<()> {
                 web::resource("/")
                     // change json extractor configuration
                     .app_data(web::Json::<FormData>::configure(|cfg| {
-                        cfg.limit(CONFIG.server.max_payload).error_handler(|err, _req| {
+                        cfg.limit(CONFIG.server.max_payload)
+                            .content_type(|mime| {  // <- accept text/plain content type
+                                mime.type_() == mime::TEXT && mime.subtype() == mime::PLAIN
+                            })
+                            .error_handler(|err, _req| {
                             // create custom error response
                             error::InternalError::from_response(
                                 err,
