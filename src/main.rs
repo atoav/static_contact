@@ -7,6 +7,11 @@
 //! curl --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088
 //! ```
 //! 
+//! Or if you want to view the returned headers:
+//! ```Bash
+//! curl -sSL -D - --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088 -o /dev/null
+//! ```
+//!
 //! This emulates a user with the name "Mr. Foo Bar", the email "mrfoo@bar.com" and the phone number "+49012345678" writing a message with the content "Media is the massage".
 //! Note the field `"identifier":"mysitename"` – this identifies the site against the server. If there is no endpoint with the identifier "mysiteidentifier" in the `config.toml`, the request is ignored.
 //! This message is checked for type and length, and will be sent via SMTP to the according `endpoint.target` email adress specified in the config.
@@ -110,7 +115,7 @@ async fn main() -> std::io::Result<()> {
         for endpoint in Config::new().endpoints {
             cors = cors.allowed_origin(endpoint.domain.clone().as_str());
         }
-        cors = cors.allowed_methods(vec!["GET", "POST"])
+        cors = cors.allowed_methods(vec!["GET", "POST", "OPTIONS"])
                    .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                    .allowed_header(http::header::CONTENT_TYPE)
                    .max_age(3600);
