@@ -144,12 +144,13 @@ async fn main() -> std::io::Result<()> {
                                 mime.type_() == mime::TEXT && mime.subtype() == mime::PLAIN
                             })
                             .error_handler(|err, _req| {
-                            // create custom error response
-                            error::InternalError::from_response(
-                                err,
-                                HttpResponse::Conflict().finish(),
-                            )
-                            .into()
+                                eprintln!("Error while decoding JSON: {:?}", err);
+                                // create custom error response
+                                error::InternalError::from_response(
+                                    err,
+                                    HttpResponse::Conflict().finish(),
+                                )
+                                .into()
                         })
                     }))
                     .route(web::post().to(index)),
