@@ -20,7 +20,7 @@
 use crate::form::FormData;
 use crate::email::send_mail;
 use actix_cors::Cors;
-use actix_web::{http, error, web, FromRequest, HttpResponse, Responder};
+use actix_web::{http::header, error, web, FromRequest, HttpResponse, Responder};
 use actix_web::middleware::Logger;
 use lazy_static::lazy_static;
 
@@ -115,9 +115,9 @@ async fn main() -> std::io::Result<()> {
         for endpoint in Config::new().endpoints {
             cors = cors.allowed_origin(endpoint.domain.clone().as_str());
         }
-        cors = cors.allowed_methods(vec!["GET", "POST", "OPTIONS"])
-                   .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-                   .allowed_header(http::header::CONTENT_TYPE)
+        cors = cors.allowed_methods(vec!["GET", "POST"])
+                   .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                   .allowed_header(header::CONTENT_TYPE)
                    .max_age(3600);
 
         App::new()
@@ -125,7 +125,6 @@ async fn main() -> std::io::Result<()> {
             .wrap( 
                 cors.finish()
             )
-            .wrap(Logger::default())
             .service(
                 web::resource("/")
                     // change json extractor configuration
@@ -141,6 +140,7 @@ async fn main() -> std::io::Result<()> {
                     }))
                     .route(web::post().to(index)),
             )
+            .wrap(Logger::default())
     })
     .bind(format!("{ip}:{port}", ip=ip, port=port))?  
     .run()
