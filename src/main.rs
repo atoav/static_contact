@@ -4,12 +4,7 @@
 //! 
 //! You can send a test request to static_contact via curl:
 //! ```Bash
-//! curl --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088
-//! ```
-//! 
-//! Or if you want to view the returned headers:
-//! ```Bash
-//! curl -sSL -D - --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088 -o /dev/null
+//! curl -sSL -D - --header "Origin: http://mysite.domain" --header "Content-Type: application/json" --request POST --data '{"name":"Mr. Foo Bar", "email":"mrfoo@bar.com", "phone":"+49012345678", "message":"Media is the massage", "identifier":"mysiteidentifier"}' http://localhost:8088
 //! ```
 //!
 //! This emulates a user with the name "Mr. Foo Bar", the email "mrfoo@bar.com" and the phone number "+49012345678" writing a message with the content "Media is the massage".
