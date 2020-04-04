@@ -10,6 +10,7 @@ use lettre::smtp::extension::ClientId;
 use lettre::smtp::ConnectionReuseParameters;
 use lettre_email::Email;
 use ammonia::clean;
+use v_htmlescape::escape;
 
 /// Send email via SMTP
 pub fn send_mail(data: &FormData, config: &Config, endpoint_config: &EndpointConfig) -> Result<Response, lettre::smtp::error::Error> {
@@ -29,15 +30,15 @@ pub fn send_mail(data: &FormData, config: &Config, endpoint_config: &EndpointCon
         .subject(format!("[{endpoint_name}] Contact from {name}", endpoint_name=endpoint_config.name, name=data.name))
         .alternative(
             format!("<p>{name} wrote:</p><br><i>{message}</i>\n\n<br><br><p>Reply to <a href=\"mailto:{email}\">{email}</a> or {phone}</p>", 
-                name=clean(&data.name), 
-                message=clean(&data.message).replace("\n", "<br>"), 
-                phone=clean(&phone_contact), 
-                email=clean(&data.email)),
+                name=escape(&clean(&data.name)), 
+                message=escape(&clean(&data.message)).to_string().replace("\n", "<br>"), 
+                phone=escape(&clean(&phone_contact)), 
+                email=escape(&clean(&data.email))),
             format!("Message from {name}:\n\n> {message}\n\nReply to <{email}> or {phone}", 
-                name=clean(&data.name), 
-                message=clean(&data.message), 
-                phone=clean(&phone_contact), 
-                email=clean(&data.email)))
+                name=escape(&clean(&data.name)), 
+                message=escape(&clean(&data.message)), 
+                phone=escape(&clean(&phone_contact)), 
+                email=escape(&clean(&data.email))))
         .build()
         .expect("Error while building mail");
 

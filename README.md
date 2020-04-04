@@ -1,7 +1,7 @@
 # static_contact
 
 static_contact is a server side tool that relays http POST requests with form fields like name, email, phone and message to email targets via SMTP.  
-This is meant to be a simple self-hosted solution for contact forms on static websites. You add a form and a little bit of javascript to a static website, it POSTs the message to a different server, does a few checks and sends it to an target adress via email. It is possible to connect multiple static websites to one single instance of the service.
+This is meant to be a simple self-hosted solution for contact forms on static websites. You add a form and a little bit of javascript to a static website, it POSTs the message to a different server, does a few checks and sends it to an target adress via email. It is possible to connect multiple static websites to one single instance of the service. The most complicated thing is to get the [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) authentification right – just check the Examples.
 
 ## Installation
 static_contact runs as a systemd-service on a local port. Although it would be possible to expose this directly to the web, it is recommended to run this service behind a a reverse proxy server (like nginx).
@@ -29,6 +29,7 @@ Check the service status via `sudo systemctl status static_contact`
 Check the logs via `journalctl -u static_contact`
 Stop the service via `sudo systemctl stop static_contact`
 Automatically start the service on boot via `sudo systemctl enable static_contact`  
+Update by running this in the downloaded repository: `git pull && cargo build --release && cargo deb && sudo dpkg -r static_contact && sudo dpkg -i target/debian/*.deb && sudo systemctl daemon-reload && sudo systemctl restart static_contact`
 
 ## Example Nginx Configuration
 Note that this used Certbot to generate Let's Encrypt certificates:
