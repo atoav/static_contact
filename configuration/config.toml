@@ -13,7 +13,7 @@ smtp_password = "yoursecretpassword"   # Password for the SMTP server
 
 [[endpoints]]
 # Identifier to be sent via POST
-identifier = "project_foo_9f1098f3c333"
+identifier = "mysiteidentifier"
 # The name gets displayed in the mail subject: 
 # [project foo] Contact from Mister X
 name = "project foo"
@@ -29,7 +29,7 @@ email_name = "John Doe (Project Foo Leader)" # Using this name
 
 # Another Endpoint with a different target:
 [[endpoints]]
-identifier = "project_bar_6231dc2f8f03"
+identifier = "mysecondsiteidentifier"
 name = "project bar"
 max_name_length = 254
 max_message_length = 2000
