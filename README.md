@@ -1,7 +1,7 @@
 # static_contact
 
 static_contact is a Rust based server side service that relays http POST requests with form fields like name, email, phone and message to email targets via SMTP.  
-This is meant to be a simple self-hosted solution to allow contact forms on static websites. You add a form and a little bit of [javascript](#Javascript) to a [static website](#HTML), it POSTs the message to a different server, where it is sanitzed and HTML escaped, a few checks are made (e.g. validity of the email) and sends it to an target adress via email. It is possible to connect multiple websites to a single instance of the service and relay them to different target websites. The most complicated thing is to get the [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) authentification right – just check the Examples.
+This is meant to be a simple self-hosted solution to allow contact forms on static websites. You add a form and a little bit of [javascript](#javascript) to a [static website](#html), it POSTs the message to a different server, where it is sanitzed and HTML escaped, a few checks are made (e.g. validity of the email) and sends it to an target adress via email. It is possible to connect multiple websites to a single instance of the service and relay them to different target websites. The most complicated thing is to get the [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) authentification right – just check the Examples.
 
 ## Installation
 static_contact runs as a systemd-service on a local port. Although it would be possible to expose this directly to the web, it is recommended to run this service behind a a reverse proxy server (like nginx).
